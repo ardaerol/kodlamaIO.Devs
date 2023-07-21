@@ -6,10 +6,12 @@ import kodlamaio.Kodlama.io.Devs.business.requests.LanguageRequest.DeleteLanguag
 import kodlamaio.Kodlama.io.Devs.business.requests.LanguageRequest.UpdateLanguageRequest;
 import kodlamaio.Kodlama.io.Devs.business.responses.LanguageResponses.GetAllLanguageResponse;
 import kodlamaio.Kodlama.io.Devs.business.responses.LanguageResponses.GetByIdLanguageRespons;
+import kodlamaio.Kodlama.io.Devs.core.utilities.mappers.ModelMapperService;
 import kodlamaio.Kodlama.io.Devs.dataAccess.abstracts.LanguageRepostory;
 import kodlamaio.Kodlama.io.Devs.dataAccess.abstracts.LanguageTechRepostory;
 import kodlamaio.Kodlama.io.Devs.entities.concretes.Language;
 import kodlamaio.Kodlama.io.Devs.entities.concretes.LanguageTech;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,15 +19,15 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
+
 public class LanguageManager implements LanguageService {
     private LanguageRepostory languageRepostory;
     private LanguageTechRepostory languageTechRepostory;
     List<Language> languages;
+    private ModelMapperService modelMapperService;
 
-    public LanguageManager(LanguageRepostory languageRepostory,LanguageTechRepostory languageTechRepostory) {
-        this.languageRepostory = languageRepostory;
-        this.languageTechRepostory = languageTechRepostory;
-    }
+
 
     @Override
     public List<GetAllLanguageResponse> getAll() {
@@ -52,28 +54,25 @@ public class LanguageManager implements LanguageService {
     @Override
     public void addLanguage(CreateLanguageRequest createLanguageRequest) throws Exception {
 
-        Language language = new Language();
-        language.setLanguageName(createLanguageRequest.getLanguageName());
+        Language language = this.modelMapperService.forRequest().map(createLanguageRequest,Language.class);
+
         this.languageRepostory.save(language);
     }
 
     @Override
     public void deleteLanguage(int id) {
-        List<Language> languages = languageRepostory.findAll();
 
-        for (Language language: languages) {
-            if (language.getLanguageId() == id){
-                languageRepostory.deleteById(id);
-            }
-        }
+
+        Language language = languageRepostory.findById(id);
+        languageRepostory.delete(language);
+
+
     }
 
     @Override
     public void updateLanguage(UpdateLanguageRequest updateLanguageRequest) {
-        Language language = languageRepostory.findById(updateLanguageRequest.getLanguageId());
+        Language language = this.modelMapperService.forRequest().map(updateLanguageRequest,Language.class);
 
-
-                language.setLanguageName(updateLanguageRequest.getLanguageName());
                 languageRepostory.save(language);
 
 
@@ -83,10 +82,8 @@ public class LanguageManager implements LanguageService {
     public GetByIdLanguageRespons    getLanguageId(int id) {
 
         Language language = languageRepostory.findById(id);
-        GetByIdLanguageRespons responseItem = new GetByIdLanguageRespons();
-        responseItem.setLanguageId(language.getLanguageId());
-        responseItem.setLanguageName(language.getLanguageName());
-
+        GetByIdLanguageRespons responseItem = this.modelMapperService.forResponse()
+                .map(language,GetByIdLanguageRespons.class);
 
             return responseItem ;
 

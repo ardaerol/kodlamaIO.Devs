@@ -6,35 +6,37 @@ import kodlamaio.Kodlama.io.Devs.business.requests.TechRequest.CreateLanguageTec
 import kodlamaio.Kodlama.io.Devs.business.requests.TechRequest.UpdateLanguageTechRequest;
 import kodlamaio.Kodlama.io.Devs.business.responses.LanguageResponses.GetAllLanguageResponse;
 import kodlamaio.Kodlama.io.Devs.business.responses.TechResponses.GetAllLanguageTechResponses;
+import kodlamaio.Kodlama.io.Devs.core.utilities.mappers.ModelMapperService;
 import kodlamaio.Kodlama.io.Devs.dataAccess.abstracts.LanguageRepostory;
 import kodlamaio.Kodlama.io.Devs.dataAccess.abstracts.LanguageTechRepostory;
 import kodlamaio.Kodlama.io.Devs.entities.concretes.Language;
 import kodlamaio.Kodlama.io.Devs.entities.concretes.LanguageTech;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class LanguageTechManager implements LanguageTechService {
     LanguageTechRepostory languageTechRepostory;
     LanguageRepostory languageRepostory;
+    ModelMapperService modelMapperService;
 
-    public LanguageTechManager(LanguageTechRepostory languageTechRepostory, LanguageRepostory languageRepostory) {
-        this.languageTechRepostory = languageTechRepostory;
-        this.languageRepostory = languageRepostory;
-    }
+
 
     @Override
     public void addTech(CreateLanguageTechRequest createLanguageTechRequest) {
-        LanguageTech languageTech = new LanguageTech();
-        Language language = new Language();
+        LanguageTech languageTech = this.modelMapperService.forRequest().map(createLanguageTechRequest,LanguageTech.class);
+        Language language = this.modelMapperService.forRequest().map(createLanguageTechRequest,Language.class);
 
-        language.setLanguageId(createLanguageTechRequest.getLanguage());
-        languageTech.setTechName(createLanguageTechRequest.getTechName());
-        languageTech.setTechId(createLanguageTechRequest.getTechId());
-        languageTech.setLanguage(language);
+//        language.setLanguageId(createLanguageTechRequest.getLanguage());
+//        languageTech.setTechName(createLanguageTechRequest.getTechName());
+//        languageTech.setTechId(createLanguageTechRequest.getTechId());
+         languageTech.setLanguage(language);
         languageTechRepostory.save(languageTech);
+
 
     }
 
@@ -47,9 +49,10 @@ public class LanguageTechManager implements LanguageTechService {
 
     @Override
     public void updateTechLanguage(int id, UpdateLanguageTechRequest updateLanguageTechRequest) {
-        LanguageTech languageTech = languageTechRepostory.findById(id).get();
+//        LanguageTech languageTech = languageTechRepostory.findById(id).get();
+        LanguageTech languageTech = this.modelMapperService.forRequest().map(updateLanguageTechRequest,LanguageTech.class);
 
-        languageTech.setTechName(updateLanguageTechRequest.getTechName());
+//        languageTech.setTechName(updateLanguageTechRequest.getTechName());
         languageTechRepostory.save(languageTech);
     }
 
