@@ -6,6 +6,7 @@ import kodlamaio.Kodlama.io.Devs.business.requests.LanguageRequest.DeleteLanguag
 import kodlamaio.Kodlama.io.Devs.business.requests.LanguageRequest.UpdateLanguageRequest;
 import kodlamaio.Kodlama.io.Devs.business.responses.LanguageResponses.GetAllLanguageResponse;
 import kodlamaio.Kodlama.io.Devs.business.responses.LanguageResponses.GetByIdLanguageRespons;
+import kodlamaio.Kodlama.io.Devs.business.rules.LanguageBusinessRules;
 import kodlamaio.Kodlama.io.Devs.core.utilities.mappers.ModelMapperService;
 import kodlamaio.Kodlama.io.Devs.dataAccess.abstracts.LanguageRepostory;
 import kodlamaio.Kodlama.io.Devs.dataAccess.abstracts.LanguageTechRepostory;
@@ -26,7 +27,7 @@ public class LanguageManager implements LanguageService {
     private LanguageTechRepostory languageTechRepostory;
     List<Language> languages;
     private ModelMapperService modelMapperService;
-
+    private LanguageBusinessRules languageBusinessRules;
 
 
     @Override
@@ -53,7 +54,7 @@ public class LanguageManager implements LanguageService {
 
     @Override
     public void addLanguage(CreateLanguageRequest createLanguageRequest) throws Exception {
-
+        this.languageBusinessRules.checkIfLanguageNameExists(createLanguageRequest.getLanguageName());
         Language language = this.modelMapperService.forRequest().map(createLanguageRequest,Language.class);
 
         this.languageRepostory.save(language);

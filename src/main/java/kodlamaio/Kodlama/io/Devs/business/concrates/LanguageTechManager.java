@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -28,13 +29,8 @@ public class LanguageTechManager implements LanguageTechService {
 
     @Override
     public void addTech(CreateLanguageTechRequest createLanguageTechRequest) {
-        LanguageTech languageTech = this.modelMapperService.forRequest().map(createLanguageTechRequest,LanguageTech.class);
-        Language language = this.modelMapperService.forRequest().map(createLanguageTechRequest,Language.class);
-
-//        language.setLanguageId(createLanguageTechRequest.getLanguage());
-//        languageTech.setTechName(createLanguageTechRequest.getTechName());
-//        languageTech.setTechId(createLanguageTechRequest.getTechId());
-         languageTech.setLanguage(language);
+        LanguageTech languageTech = this.modelMapperService.forRequest()
+                .map(createLanguageTechRequest,LanguageTech.class);
         languageTechRepostory.save(languageTech);
 
 
@@ -58,23 +54,24 @@ public class LanguageTechManager implements LanguageTechService {
 
     @Override
     public List<GetAllLanguageTechResponses> getAll() {
-        List<LanguageTech> languageTech = languageTechRepostory.findAll();
+        List<LanguageTech> languageTechs = languageTechRepostory.findAll();
 
-        List<GetAllLanguageTechResponses> getAllLanguageTechResponses = new ArrayList<GetAllLanguageTechResponses>();
-
-
-
-
-        for (LanguageTech languageTech1:languageTech) {
-            GetAllLanguageTechResponses responses = new GetAllLanguageTechResponses();
+        List<GetAllLanguageTechResponses> getAllLanguageTechResponses = languageTechs.stream().map(languageTech -> this.modelMapperService.forResponse()
+                .map(languageTech,GetAllLanguageTechResponses.class)).collect(Collectors.toList());
 
 
-            responses.setTechId(languageTech1.getTechId());
-            responses.setTechName(languageTech1.getTechName());
-            responses.setLanguage(languageTech1.getLanguage().getLanguageId());
 
-            getAllLanguageTechResponses.add(responses);
-        }
+
+//        for (LanguageTech languageTech1:languageTech) {
+//            GetAllLanguageTechResponses responses = new GetAllLanguageTechResponses();
+//
+//
+//            responses.setTechId(languageTech1.getTechId());
+//            responses.setTechName(languageTech1.getTechName());
+//            responses.setLanguage(languageTech1.getLanguage().getLanguageId());
+//
+//            getAllLanguageTechResponses.add(responses);
+//        }
 
 
 

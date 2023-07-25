@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface LanguageRepostory extends JpaRepository<Language,Integer> {
     Language findById(int id);
 
+    boolean existsByLanguageName(String languageName);
+
 }

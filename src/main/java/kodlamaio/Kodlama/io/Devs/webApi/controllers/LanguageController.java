@@ -1,5 +1,6 @@
 package kodlamaio.Kodlama.io.Devs.webApi.controllers;
 
+import jakarta.validation.Valid;
 import kodlamaio.Kodlama.io.Devs.business.abstracts.LanguageService;
 import kodlamaio.Kodlama.io.Devs.business.requests.LanguageRequest.CreateLanguageRequest;
 import kodlamaio.Kodlama.io.Devs.business.requests.LanguageRequest.DeleteLanguageRequest;
@@ -26,7 +27,7 @@ public class LanguageController {
     }
 
     @PostMapping("/add")
-    void addLanguage(CreateLanguageRequest createLanguageRequest) throws Exception {
+    void addLanguage(@RequestBody @Valid  CreateLanguageRequest createLanguageRequest) throws Exception {
         languageService.addLanguage(createLanguageRequest);
     }
 
